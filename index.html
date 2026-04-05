@@ -22,7 +22,6 @@
         .write-section { max-width: 500px; margin: 0 auto 40px; background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.02); border: 1px solid var(--border); }
         select, input, textarea { width: 100%; box-sizing: border-box; padding: 11px; margin-bottom: 11px; border: 1px solid #e0e0e0; border-radius: 10px; font-family: inherit; outline: none; background-color: #fcfcfc; }
         
-        /* ✅ 파일 선택 버튼 커스텀 스타일 */
         .file-upload-wrapper { margin-bottom: 11px; display: flex; align-items: center; gap: 10px; }
         .file-upload-label { 
             background: #f0f0f0; color: #666; padding: 10px 15px; border-radius: 10px; 
@@ -31,7 +30,7 @@
         }
         .file-upload-label:hover { background: #e5e5e5; }
         #file-name-display { font-size: 0.75rem; color: #999; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        #pFiles { display: none; } /* 실제 input은 숨김 */
+        #pFiles { display: none; }
 
         .btn-post { width: 100%; background: var(--main); color: white; border: none; padding: 13px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.95rem; }
         
@@ -107,7 +106,7 @@
             <textarea id="pContent" rows="4" placeholder="내용..."></textarea>
             
             <div class="file-upload-wrapper">
-                <label for="pFiles" class="file-upload-label">📸 사진/영상 선택</label>
+                <label for="pFiles" class="file-upload-label">파일 선택</label>
                 <span id="file-name-display">선택된 파일 없음</span>
                 <input type="file" id="pFiles" accept="image/*,video/*" multiple onchange="updateFileName()">
             </div>
@@ -133,15 +132,12 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
 
-        // ✅ 파일 선택 시 이름 표시 업데이트 함수
         window.updateFileName = () => {
             const input = document.getElementById('pFiles');
             const display = document.getElementById('file-name-display');
             if(input.files.length > 0) {
                 display.innerText = input.files.length > 1 ? `${input.files[0].name} 외 ${input.files.length - 1}개` : input.files[0].name;
-            } else {
-                display.innerText = "선택된 파일 없음";
-            }
+            } else { display.innerText = "선택된 파일 없음"; }
         };
 
         let currentTab = '전체';
@@ -232,9 +228,12 @@
                 <div style="display:flex; gap:5px; width:100%;">
                     <input type="text" id="edit-c-input-${commentId}" class="comment-input" value="${currentText}" style="flex:1;">
                     <button class="comment-btn" onclick="updateComment('${postId}', ${commentId})" style="padding:0 8px; font-size:0.65rem;">완료</button>
-                    <button class="comment-btn" onclick="render()" style="padding:0 8px; font-size:0.65rem;">취소</button>
+                    <button class="comment-btn" onclick="window.cancelCommentEdit()" style="padding:0 8px; font-size:0.65rem;">취소</button>
                 </div>`;
         };
+
+        // ✅ 댓글 수정 취소 시 화면을 다시 그려주는 전역 함수
+        window.cancelCommentEdit = () => { render(); };
 
         window.updateComment = async (postId, commentId) => {
             const newText = document.getElementById(`edit-c-input-${commentId}`).value;
