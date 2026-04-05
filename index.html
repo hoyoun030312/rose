@@ -15,11 +15,7 @@
         .nav-item.active { background: var(--main) !important; color: white !important; }
 
         .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; box-sizing: border-box; }
-        
-        /* ✅ 유튜브 임베드 스타일 */
         .video-wrapper { max-width: 500px; margin: 0 auto 15px; border-radius: 20px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.05); aspect-ratio: 16 / 9; }
-        
-        /* ✅ 추천곡 스타일 (프레임 제거 버전) */
         .recommend-tag { text-align: center; margin-bottom: 25px; }
         .recommend-tag span { font-size: 0.95rem; font-weight: bold; color: var(--main); display: inline-block; letter-spacing: -0.5px; }
 
@@ -32,7 +28,6 @@
         @media (max-width: 600px) { #postsList { grid-template-columns: 1fr; } }
         
         .post-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.03); border: 1px solid var(--border); display: flex; flex-direction: column; }
-        
         .swiper { width: 100%; aspect-ratio: 1 / 1; background: #f9f9f9; position: relative; }
         .swiper-slide img, .swiper-slide video { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
         .swiper-button-next, .swiper-button-prev { background: rgba(255, 255, 255, 0.7); width: 26px !important; height: 26px !important; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.1); color: #333 !important; transition: 0.2s; }
@@ -47,14 +42,11 @@
         .delete-btn { color: #ffadad; }
         .post-title { font-size: 1rem; font-weight: bold; margin-bottom: 8px; color: var(--title); }
 
-        /* ✅ 본문 스크롤바 디자인 */
         .post-content { line-height: 1.6; font-size: 0.85rem; white-space: pre-wrap; word-break: break-all; max-height: 150px; overflow-y: auto; padding-right: 5px; }
         .post-content::-webkit-scrollbar { width: 4px; }
         .post-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-
         .post-date { font-size: 0.65rem; color: #cccccc; margin-top: 12px; }
 
-        /* ✅ 수정 모드 버튼 디자인 복구 */
         .edit-container { display: flex; flex-direction: column; gap: 4px; }
         .edit-input-field { font-size: 0.85rem; padding: 11px; border: 1px solid #e0e0e0; border-radius: 10px; width: 100%; box-sizing: border-box; font-family: inherit; outline: none; background-color: #fcfcfc; margin-bottom: 8px; }
         .edit-btn-group { display: flex; gap: 8px; margin-top: 4px; }
@@ -62,8 +54,22 @@
         .btn-save { background: var(--main); color: white; }
         .btn-cancel { background: #f0f0f0; color: #888; }
 
+        /* 🔥 댓글 영역 스크롤 제한 추가 */
         .comment-section { background: #fafafa; padding: 12px 18px; border-top: 1px solid #f5f5f5; }
-        .comment-item { font-size: 0.75rem; margin-bottom: 5px; border-bottom: 1px dashed #eee; padding-bottom: 4px; }
+        .comment-list-wrapper { 
+            max-height: 120px; /* 댓글 리스트 최대 높이 */
+            overflow-y: auto;  /* 넘치면 스크롤바 */
+            padding-right: 5px;
+        }
+        .comment-list-wrapper::-webkit-scrollbar { width: 3px; }
+        .comment-list-wrapper::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
+
+        .comment-item { font-size: 0.75rem; margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 6px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .comment-text-box { flex: 1; margin-right: 10px; word-break: break-all; }
+        .comment-actions { display: flex; gap: 6px; flex-shrink: 0; }
+        .comment-action-btn { font-size: 0.6rem; cursor: pointer; color: #ccc; transition: 0.2s; border: none; background: none; padding: 0; }
+        .comment-action-btn:hover { color: var(--main); }
+
         .comment-form { display: flex; gap: 8px; margin-top: 10px; }
         .comment-input { margin-bottom: 0; padding: 7px; font-size: 0.75rem; flex: 1; border-radius: 8px; border: 1px solid #eee; }
         .comment-btn { background: #f0f0f0; border: none; padding: 0 12px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; color: #888; font-weight: bold; white-space: nowrap; flex-shrink: 0; }
@@ -83,14 +89,11 @@
             <div class="nav-item" onclick="setTab('사진/영상')">사진/영상</div>
         </div>
     </div>
-
     <div class="container">
         <div class="video-wrapper">
             <iframe width="100%" height="100%" src="https://www.youtube.com/embed/zgaCZOQCpp8?si=r4Kl3mmmFczaCgFz" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
-        
-        <div class="recommend-tag"><span>🎵 Music </span></div>
-
+        <div class="recommend-tag"><span>🎵 MUSIC </span></div>
         <div class="write-section">
             <select id="pCategory"><option value="일기">📖 일기</option><option value="편지">💌 편지</option><option value="사진/영상">📸 사진/영상</option></select>
             <input type="text" id="pTitle" placeholder="제목">
@@ -104,9 +107,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script type="module">
-        /* ✅ 파이어베이스 스크립트는 기존과 동일 */
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, deleteDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
         const firebaseConfig = {
@@ -118,7 +120,6 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
 
-        /* (나머지 렌더링 및 기능 함수는 동일) */
         let currentTab = '전체';
         window.setTab = (tab) => {
             currentTab = tab;
@@ -128,6 +129,7 @@
             });
             render();
         };
+
         window.openModal = (url) => { document.getElementById('modalImg').src = url; document.getElementById('modal').style.display = 'flex'; };
         window.closeModal = () => { document.getElementById('modal').style.display = 'none'; };
 
@@ -151,15 +153,13 @@
             } catch (e) { alert("오류"); btn.disabled = false; }
         };
 
-        window.deletePost = async (id) => { if(confirm("삭제할까요?")) await deleteDoc(doc(db, "rose_memory_v5", id)); };
-        window.cancelEdit = (id) => { const card = document.getElementById(`body-${id}`); card.removeAttribute('data-editing'); render(); };
+        window.deletePost = async (id) => { if(confirm("게시물을 삭제할까요?")) await deleteDoc(doc(db, "rose_memory_v5", id)); };
+        window.cancelEdit = (id) => { render(); };
         window.toggleEdit = (id) => {
             const card = document.getElementById(`body-${id}`);
-            if (card.getAttribute('data-editing') === 'true') { cancelEdit(id); return; }
             const title = card.querySelector('.post-title').innerText;
             const content = card.querySelector('.post-content').innerText;
             const category = card.querySelector('.category-tag').innerText;
-            card.setAttribute('data-editing', 'true');
             card.innerHTML = `
                 <div class="edit-container">
                     <select id="edit-cat-${id}" class="edit-input-field">
@@ -167,8 +167,8 @@
                         <option value="편지" ${category==='편지'?'selected':''}>편지</option>
                         <option value="사진/영상" ${category==='사진/영상'?'selected':''}>사진/영상</option>
                     </select>
-                    <input type="text" id="edit-title-${id}" class="edit-input-field" value="${title==='제목'?'':title}" placeholder="제목">
-                    <textarea id="edit-content-${id}" class="edit-input-field" rows="3" placeholder="내용">${content==='내용'?'':content}</textarea>
+                    <input type="text" id="edit-title-${id}" class="edit-input-field" value="${title==='제목'?'':title}">
+                    <textarea id="edit-content-${id}" class="edit-input-field" rows="3">${content==='내용'?'':content}</textarea>
                     <div class="edit-btn-group">
                         <button class="action-btn btn-save" onclick="updatePost('${id}')">완료</button>
                         <button class="action-btn btn-cancel" onclick="cancelEdit('${id}')">취소</button>
@@ -181,13 +181,43 @@
                 content: document.getElementById(`edit-content-${id}`).value,
                 category: document.getElementById(`edit-cat-${id}`).value
             });
-            cancelEdit(id);
         };
+
         window.addComment = async (id) => {
             const input = document.getElementById(`cInput-${id}`);
             if(!input.value) return;
-            await updateDoc(doc(db, "rose_memory_v5", id), { comments: arrayUnion({ text: input.value, time: new Date().toLocaleDateString('ko-KR') }) });
+            const postRef = doc(db, "rose_memory_v5", id);
+            const postSnap = await getDoc(postRef);
+            const comments = postSnap.data().comments || [];
+            comments.push({ id: Date.now(), text: input.value });
+            await updateDoc(postRef, { comments });
             input.value = '';
+        };
+
+        window.deleteComment = async (postId, commentId) => {
+            if(!confirm("댓글을 삭제할까요?")) return;
+            const postRef = doc(db, "rose_memory_v5", postId);
+            const postSnap = await getDoc(postRef);
+            const comments = postSnap.data().comments.filter(c => c.id !== commentId);
+            await updateDoc(postRef, { comments });
+        };
+
+        window.toggleEditComment = (postId, commentId, currentText) => {
+            const commentBox = document.getElementById(`comment-text-${commentId}`);
+            commentBox.innerHTML = `
+                <div style="display:flex; gap:5px; width:100%;">
+                    <input type="text" id="edit-c-input-${commentId}" class="comment-input" value="${currentText}" style="flex:1;">
+                    <button class="comment-btn" onclick="updateComment('${postId}', ${commentId})" style="padding:0 8px; font-size:0.65rem;">완료</button>
+                    <button class="comment-btn" onclick="render()" style="padding:0 8px; font-size:0.65rem;">취소</button>
+                </div>`;
+        };
+
+        window.updateComment = async (postId, commentId) => {
+            const newText = document.getElementById(`edit-c-input-${commentId}`).value;
+            const postRef = doc(db, "rose_memory_v5", postId);
+            const postSnap = await getDoc(postRef);
+            const comments = postSnap.data().comments.map(c => c.id === commentId ? { ...c, text: newText } : c);
+            await updateDoc(postRef, { comments });
         };
 
         function render() {
@@ -195,12 +225,10 @@
             onSnapshot(q, (snapshot) => {
                 const list = document.getElementById('postsList');
                 list.innerHTML = '';
-                snapshot.forEach((doc) => {
-                    const d = doc.data();
+                snapshot.forEach((docSnap) => {
+                    const d = docSnap.data();
                     if (currentTab !== '전체' && d.category !== currentTab) return;
-                    const id = doc.id;
-                    const existingCard = document.getElementById(`body-${id}`);
-                    if (existingCard && existingCard.getAttribute('data-editing') === 'true') return;
+                    const id = docSnap.id;
                     let slides = '';
                     if (d.files && d.files.length > 0) {
                         d.files.forEach(f => { slides += `<div class="swiper-slide" onclick="openModal('${f.url}')">${f.type === 'image' ? `<img src="${f.url}">` : `<video src="${f.url}" controls></video>`}</div>`; });
@@ -215,7 +243,16 @@
                                 <div class="post-date">${d.date ? d.date.toDate().toLocaleString('ko-KR') : "방금 전"}</div>
                             </div>
                             <div class="comment-section">
-                                <div id="comments-${id}">${(d.comments || []).map(c => `<div class="comment-item"><b>💬</b> ${c.text}</div>`).join('')}</div>
+                                <div class="comment-list-wrapper" id="comments-${id}">
+                                    ${(d.comments || []).map(c => `
+                                        <div class="comment-item">
+                                            <div class="comment-text-box" id="comment-text-${c.id}"><b>💬</b> ${c.text}</div>
+                                            <div class="comment-actions">
+                                                <button class="comment-action-btn" onclick="toggleEditComment('${id}', ${c.id}, '${c.text}')">수정</button>
+                                                <button class="comment-action-btn" onclick="deleteComment('${id}', ${c.id})">삭제</button>
+                                            </div>
+                                        </div>`).join('')}
+                                </div>
                                 <div class="comment-form"><input type="text" id="cInput-${id}" class="comment-input" placeholder="댓글..."><button class="comment-btn" onclick="addComment('${id}')">등록</button></div>
                             </div>
                         </div>`;
