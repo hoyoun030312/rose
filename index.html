@@ -22,7 +22,6 @@
         .write-section { max-width: 500px; margin: 0 auto 40px; background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.02); border: 1px solid var(--border); }
         select, input, textarea { width: 100%; box-sizing: border-box; padding: 11px; margin-bottom: 11px; border: 1px solid #e0e0e0; border-radius: 10px; font-family: inherit; outline: none; background-color: #fcfcfc; }
         
-        /* 파일 업로드 스타일 */
         .file-upload-wrapper { margin-bottom: 11px; }
         .file-upload-label { 
             background: #f0f0f0; color: #666; padding: 10px 15px; border-radius: 10px; 
@@ -31,7 +30,6 @@
         }
         #pFiles { display: none; }
 
-        /* ✅ 파일 미리보기 썸네일 스타일 */
         .preview-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
         .preview-item { position: relative; width: 60px; height: 60px; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
         .preview-item img, .preview-item video { width: 100%; height: 100%; object-fit: cover; }
@@ -109,18 +107,15 @@
             <iframe width="100%" height="100%" src="https://www.youtube.com/embed/zgaCZOQCpp8?si=r4Kl3mmmFczaCgFz" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
         <div class="recommend-tag"><span>🎵 MUSIC </span></div>
-        
         <div class="write-section">
             <select id="pCategory"><option value="일기">📖 일기</option><option value="편지">💌 편지</option><option value="사진/영상">📸 사진/영상</option></select>
             <input type="text" id="pTitle" placeholder="제목">
             <textarea id="pContent" rows="4" placeholder="내용..."></textarea>
-            
             <div class="file-upload-wrapper">
                 <label for="pFiles" class="file-upload-label"> 파일 선택 </label>
                 <input type="file" id="pFiles" accept="image/*,video/*" multiple onchange="handleFileSelect(event, 'write')">
                 <div id="write-previews" class="preview-container"></div>
             </div>
-
             <div id="loading-msg" style="display:none; text-align:center; font-weight:bold; margin-bottom:10px;">저장 중... </div>
             <button class="btn-post" id="postBtn" onclick="savePost()">저장</button>
         </div>
@@ -142,43 +137,37 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
 
-        // ✅ 파일 관리용 변수
-        let selectedFiles = []; // 작성 시 파일들
-        let editFiles = [];     // 수정 시 파일들 (기존 + 새 파일)
+        let selectedFiles = []; 
+        let editFiles = [];
 
-        // ✅ 파일 선택 및 미리보기 핸들러
+        // ✅ 렌더링 함수를 전역에서 호출 가능하도록 미리 선언
+        window.reRender = () => { render(); };
+
         window.handleFileSelect = (event, mode) => {
             const files = Array.from(event.target.files);
             if (mode === 'write') {
                 selectedFiles = [...selectedFiles, ...files];
                 renderPreviews(selectedFiles, 'write-previews', 'write');
             } else {
-                const id = mode; // 수정 모드일 때는 mode 자리에 게시글 ID가 들어옴
                 editFiles = [...editFiles, ...files];
-                renderPreviews(editFiles, `edit-previews-${id}`, id);
+                renderPreviews(editFiles, `edit-previews-${mode}`, mode);
             }
         };
 
-        // ✅ 미리보기 렌더링 및 삭제 버튼 연결
         function renderPreviews(fileList, containerId, mode) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
             fileList.forEach((file, index) => {
-                const isExisting = file.url; // 기존 업로드된 파일인지 확인
+                const isExisting = file.url;
                 const src = isExisting ? file.url : URL.createObjectURL(file);
                 const type = isExisting ? file.type : file.type.split('/')[0];
-
                 const item = document.createElement('div');
                 item.className = 'preview-item';
-                item.innerHTML = `
-                    ${type === 'image' ? `<img src="${src}">` : `<video src="${src}"></video>`}
-                    <button class="remove-file-btn" onclick="removeFile(${index}, '${containerId}', '${mode}')">X</button>
-                `;
+                item.innerHTML = `${type === 'image' ? `<img src="${src}">` : `<video src="${src}"></video>`}<button class="remove-file-btn" onclick="removeFile(${index}, '${containerId}', '${mode}')">X</button>`;
                 container.appendChild(item);
             });
         }
 
-        // ✅ 파일 개별 삭제
         window.removeFile = (index, containerId, mode) => {
             if (mode === 'write') {
                 selectedFiles.splice(index, 1);
@@ -214,42 +203,31 @@
             const card = document.getElementById(`body-${id}`);
             const postSnap = await getDoc(doc(db, "rose_memory_v5", id));
             const d = postSnap.data();
-            
-            editFiles = d.files || []; // 기존 파일 로드
-            
+            editFiles = d.files || [];
             card.innerHTML = `
                 <div class="edit-container">
-                    <select id="edit-cat-${id}" class="edit-input-field">
-                        <option value="일기" ${d.category==='일기'?'selected':''}>일기</option>
-                        <option value="편지" ${d.category==='편지'?'selected':''}>편지</option>
-                        <option value="사진/영상" ${d.category==='사진/영상'?'selected':''}>사진/영상</option>
-                    </select>
+                    <select id="edit-cat-${id}" class="edit-input-field"><option value="일기" ${d.category==='일기'?'selected':''}>일기</option><option value="편지" ${d.category==='편지'?'selected':''}>편지</option><option value="사진/영상" ${d.category==='사진/영상'?'selected':''}>사진/영상</option></select>
                     <input type="text" id="edit-title-${id}" class="edit-input-field" value="${d.title}">
                     <textarea id="edit-content-${id}" class="edit-input-field" rows="3">${d.content}</textarea>
-                    
                     <div class="file-upload-wrapper">
                         <label for="edit-files-${id}" class="file-upload-label" style="font-size:0.7rem; padding:6px 10px;">+ 파일 추가</label>
                         <input type="file" id="edit-files-${id}" accept="image/*,video/*" multiple onchange="handleFileSelect(event, '${id}')" style="display:none;">
                         <div id="edit-previews-${id}" class="preview-container"></div>
                     </div>
-
                     <div class="edit-btn-group">
                         <button class="action-btn btn-save" onclick="updatePost('${id}')">완료</button>
-                        <button class="action-btn btn-cancel" onclick="render()">취소</button>
+                        <button class="action-btn btn-cancel" onclick="reRender()">취소</button>
                     </div>
                 </div>`;
             renderPreviews(editFiles, `edit-previews-${id}`, id);
         };
 
         window.updatePost = async (id) => {
-            const btn = document.querySelector(`.btn-save`);
-            btn.innerText = "처리 중...";
             try {
                 let finalFileData = [];
                 for (let file of editFiles) {
-                    if (file.url) {
-                        finalFileData.push(file); // 기존 파일
-                    } else {
+                    if (file.url) finalFileData.push(file);
+                    else {
                         const storageRef = ref(storage, `memories/${Date.now()}_${file.name}`);
                         await uploadBytes(storageRef, file);
                         const url = await getDownloadURL(storageRef);
@@ -263,10 +241,9 @@
                     files: finalFileData
                 });
                 render();
-            } catch (e) { alert("업데이트 오류"); }
+            } catch (e) { alert("오류"); }
         };
 
-        // 댓글 관련 함수 (기존과 동일)
         window.addComment = async (id) => {
             const input = document.getElementById(`cInput-${id}`);
             if(!input.value) return;
@@ -277,6 +254,7 @@
             await updateDoc(postRef, { comments });
             input.value = '';
         };
+
         window.deleteComment = async (postId, commentId) => {
             if(!confirm("댓글을 삭제할까요?")) return;
             const postRef = doc(db, "rose_memory_v5", postId);
@@ -284,10 +262,12 @@
             const comments = postSnap.data().comments.filter(c => c.id !== commentId);
             await updateDoc(postRef, { comments });
         };
+
         window.toggleEditComment = (postId, commentId, currentText) => {
             const commentBox = document.getElementById(`comment-text-${commentId}`);
-            commentBox.innerHTML = `<div style="display:flex; gap:5px; width:100%;"><input type="text" id="edit-c-input-${commentId}" class="comment-input" value="${currentText}" style="flex:1;"><button class="comment-btn" onclick="updateComment('${postId}', ${commentId})" style="padding:0 8px; font-size:0.65rem;">완료</button><button class="comment-btn" onclick="render()" style="padding:0 8px; font-size:0.65rem;">취소</button></div>`;
+            commentBox.innerHTML = `<div style="display:flex; gap:5px; width:100%;"><input type="text" id="edit-c-input-${commentId}" class="comment-input" value="${currentText}" style="flex:1;"><button class="comment-btn" onclick="updateComment('${postId}', ${commentId})" style="padding:0 8px; font-size:0.65rem;">완료</button><button class="comment-btn" onclick="reRender()" style="padding:0 8px; font-size:0.65rem;">취소</button></div>`;
         };
+
         window.updateComment = async (postId, commentId) => {
             const newText = document.getElementById(`edit-c-input-${commentId}`).value;
             const postRef = doc(db, "rose_memory_v5", postId);
@@ -298,6 +278,16 @@
 
         window.openModal = (url) => { document.getElementById('modalImg').src = url; document.getElementById('modal').style.display = 'flex'; };
         window.closeModal = () => { document.getElementById('modal').style.display = 'none'; };
+
+        let currentTab = '전체';
+        window.setTab = (tab) => {
+            currentTab = tab;
+            document.querySelectorAll('.nav-item').forEach(el => {
+                if (el.innerText.includes(tab)) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+            render();
+        };
 
         function render() {
             const q = query(collection(db, "rose_memory_v5"), orderBy("date", "desc"));
@@ -332,15 +322,6 @@
                 });
             });
         }
-        window.setTab = (tab) => {
-            currentTab = tab;
-            document.querySelectorAll('.nav-item').forEach(el => {
-                if (el.innerText.includes(tab)) el.classList.add('active');
-                else el.classList.remove('active');
-            });
-            render();
-        };
-        let currentTab = '전체';
         render();
     </script>
 </body>
